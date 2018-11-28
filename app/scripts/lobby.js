@@ -29,7 +29,7 @@ module.exports = React.createClass({
         console.log("Mounted");
         this.state._isMounted = true;
         this.loadOnlineUsersFromServer();
-        setInterval(this.loadOnlineUsersServer, POLL_INTERVAL);
+        setInterval(this.loadOnlineUsersFromServer, POLL_INTERVAL);
     },
     logout: function() {
         console.log("Logout!");
