@@ -1,8 +1,8 @@
-#Final Project for CS336 - Tic Tac Toe
+# Final Project for CS336 - Tic Tac Toe
 
-##Creators: Jason Klaassen (NinjaMarshmallow), Andrew Fulling (Littlesnowman88)
+## Creators: Jason Klaassen (NinjaMarshmallow), Andrew Fulling (Littlesnowman88)
 
-##Vision Statement
+## Vision Statement
 
 Ultimate Tic-Tac-Toe raises the strategy of normal tic-tac-toe to greater heights! 
 With a 3x3 board of tic-tac-toe games, two opponents face off to achieve three games won in a row.
