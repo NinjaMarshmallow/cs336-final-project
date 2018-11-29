@@ -2,11 +2,10 @@ import React from 'react';
 import $ from 'jquery';
 import '../css/base.css';
 import {API_URL, POLL_INTERVAL } from './global'
-import { browserHistory } from 'react-router'
 
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isMounted: false};
+        return {username: "", opponent: "", _isMounted: false};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -49,37 +48,12 @@ module.exports = React.createClass({
             }.bind(this)
         });
     },
-    challenge: function(opponentName) {
-        var user = this.props.location.state.username.username
-        if(opponentName == user) {
-            console.log("That's you...");
-        } else {
-            console.log("Issuing challenge to: " + opponentName);
-            browserHistory.push({
-                pathname:"/match",
-                state: {username: user,
-                        opponent: opponentName
-                       }
-            })    
-        }
-    },
     render: function() {
-        var onlineUsers = this.state.users.map(user => {
-            return(<div>
-                    <a onClick={() => this.challenge(user.username)}>{user.username}</a>
-                    <br/>
-                   </div>);
-        });
-        //<input id="search" type="text"/>
+        var state = this.props.location.state
+        console.log(state);
         return (
             <div>
-                <h1 id="title"> Tic Tac Toe Lobby</h1>
-                <h3 id="usersHeading">Online Users</h3>
-
-                <div>
-                    {onlineUsers}
-                </div>
-                <input type="button" onClick={this.logout} value="Logout"/>
+                <h1 id="title">{this.props.location.state.username} VS. {this.props.location.state.opponent}</h1>
             </div>
         );
     }
