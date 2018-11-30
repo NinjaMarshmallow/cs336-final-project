@@ -5,9 +5,9 @@
 #### Usernames Collection
 
 	Document Structure:
-		`{
+		{
 			"username" : "Littlesnowman88"
-		}`
+		}
 
 	List of usernames currently connected the service
 	
@@ -19,11 +19,11 @@
 #### Challenge Collection
 
 	Document Structure
-		`{
+		{
 			"username" : "Littlesnowman88",
 			"opponent" : "The Moose",
 			"first" : "Littlesnowman88"
-		}`
+		}
 		
 	Record added when a client in the lobby clicks the name of the desire opponent
 	
@@ -43,12 +43,12 @@
 #### Moves Collection
 
 	Document Structure:
-		`{
+		{
 			"username" : "Littlesnowman88",
 			"opponent" : "The Moose",
 			"board" : A number between 0 and 8 to isolate which board is being selected,
 			"square" : A number between 0 and 8 to isolate which square is selected within the board
-		}`
+		}
 		
 	Record added when a player in a game clicks on a valid move
 	
