@@ -3,6 +3,7 @@ import $ from 'jquery';
 import '../css/base.css';
 import {API_URL, POLL_INTERVAL } from './global'
 import { browserHistory } from 'react-router'
+import Match from "./match"
 
 module.exports = React.createClass({
     getInitialState: function() {
@@ -50,20 +51,17 @@ module.exports = React.createClass({
         });
     },
     challenge: function(opponentName) {
-        var user = this.props.location.state.username.username
-        if(opponentName == user) {
+        if(opponentName == this.props.location.state.username.username) {
             console.log("That's you...");
         } else {
             console.log("Issuing challenge to: " + opponentName);
-            browserHistory.push({
-                pathname:"/match",
-                state: {username: user,
-                        opponent: opponentName
-                       }
-            })    
+            this.setState({opponent: opponentName});
         }
     },
     render: function() {
+        console.log(this.state.opponent);
+        var isVisible = this.state.opponent != undefined;
+        console.log("Show: " + isVisible);
         var onlineUsers = this.state.users.map(user => {
             return(<div>
                     <a onClick={() => this.challenge(user.username)}>{user.username}</a>
@@ -73,13 +71,18 @@ module.exports = React.createClass({
         //<input id="search" type="text"/>
         return (
             <div>
-                <h1 id="title"> Tic Tac Toe Lobby</h1>
-                <h3 id="usersHeading">Online Users</h3>
+                <div className="left">
+                    <h1 id="title"> Tic Tac Toe Lobby</h1>
+                    <h3 id="usersHeading">Online Users</h3>
 
-                <div>
-                    {onlineUsers}
+                    <div>
+                        {onlineUsers}
+                    </div>
+                    <input type="button" onClick={this.logout} value="Logout"/>
                 </div>
-                <input type="button" onClick={this.logout} value="Logout"/>
+                <div className="right">
+                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} show={isVisible}/>
+                </div>
             </div>
         );
     }
