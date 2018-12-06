@@ -4,10 +4,11 @@ import '../css/base.css';
 import {API_URL, POLL_INTERVAL } from './global'
 import { browserHistory } from 'react-router'
 import Match from "./match"
+var API_CHALLENGES = "/api/challenges"
 
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isMounted: false};
+        return {users: [], _isPlaying: false, _isMounted: false};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -25,13 +26,50 @@ module.exports = React.createClass({
             });
         }
     },
+    checkDatabaseForChallenges: function() {
+    	console.log("Props: ")
+    	console.log(this.props);
+    	console.log(this.props.location.state.username.username);
+    	var data = {username: this.props.location.state.username.username };
+    	console.log("Data: ");
+    	console.log(data);
+    	if(!this.state._isPlaying) {
+	    	$.ajax({
+	    		url: API_CHALLENGES,
+	    		type: "GET",
+	    		contentType:'application/json',
+	            dataType: 'json',
+	            data: data,
+	            cache: false,
+	            success: function(res) {
+	            	console.log(res);
+	            	if(res.result != "No Challenges") {
+		            	console.log("Challenge Received: ");
+		            	console.log(res);
+		            	var accept = confirm(`${res.result} has challenged you. Accept?`);
+		            	if (accept) {
+		            		console.log("You accepted the challenge");
+		            		this.state._isPlaying = true;
+		            		this.setState({opponent: res.result});	
+		            	}
+		                
+	            	}
+	            }.bind(this),
+	            error: function(xhr, status, err) {
+	                console.error(xhr, API_URL, status, err.toString() + " @ checkDatabaseForChallenges");
+	            }.bind(this)
+	    	});
+    	}
+    },
     componentDidMount: function() {
         window.addEventListener("beforeunload", event => { this.logout() });
         window.onpopstate = event => { this.logout() };
         console.log("Mounted");
         this.state._isMounted = true;
         this.loadOnlineUsersFromServer();
+        this.checkDatabaseForChallenges();
         setInterval(this.loadOnlineUsersFromServer, POLL_INTERVAL);
+        setInterval(this.checkDatabaseForChallenges, POLL_INTERVAL);
     },
     logout: function() {
         console.log("Logout!");
@@ -54,14 +92,25 @@ module.exports = React.createClass({
         if(opponentName == this.props.location.state.username.username) {
             console.log("That's you...");
         } else {
-            console.log("Issuing challenge to: " + opponentName);
-            this.setState({opponent: opponentName});
+            $.ajax({
+            	url: API_CHALLENGES,
+	            type: 'POST',
+	            dataType: "json",
+	            data: {"username": `${this.props.location.state.username.username}`,
+        				"opponent": `${opponentName}`,
+        				"first": `${this.props.location.state.username.username}`},
+	            success: function(users) {
+	                console.log("Issuing challenge to: " + opponentName);
+	            }.bind(this),
+	            error: function(xhr, status, err) {
+	                console.error(xhr, API_CHALLENGES, status, err.toString() + " @ challenge");
+	            }.bind(this)
+            })
         }
     },
     render: function() {
         console.log(this.state.opponent);
         var isVisible = this.state.opponent != undefined;
-        console.log("Show: " + isVisible);
         var onlineUsers = this.state.users.map(user => {
             return(<div>
                     <a onClick={() => this.challenge(user.username)}>{user.username}</a>

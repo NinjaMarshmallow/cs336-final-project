@@ -11,6 +11,8 @@ module.exports = React.createClass({
     },
     handleUserNameSubmit: function(username) {
         this.setState({username: username});
+        console.log("username object");
+        console.log(username);
         $.ajax({
             url: API_URL,
             dataType: 'json',
