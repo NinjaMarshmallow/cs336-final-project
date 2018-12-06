@@ -86,6 +86,15 @@ app.delete('/api/usernames', function(req, res) {
     var username = (req.body.username);
     try {
         usernamesDB.collection('usernames').remove(req.body);
+    } catch(e) {
+        console.log(e);
+    }
+})
+
+app.delete('/api/challenges', function(req, res) {
+    console.log("Delete Request");
+    console.log(req.body);
+    try {
         usernamesDB.collection('challenges').remove({username: username});
         usernamesDB.collection('challenges').remove({opponent: username});
     } catch(e) {

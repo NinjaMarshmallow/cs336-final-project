@@ -45,7 +45,6 @@ module.exports = React.createClass({
 	            	console.log(res);
 	            	if(res.result != "No Challenges") {
 		            	console.log("Challenge Received: ");
-		            	console.log(res);
 		            	var accept = confirm(`${res.result} has challenged you. Accept?`);
 		            	if (accept) {
 		            		console.log("You accepted the challenge");
@@ -59,6 +58,8 @@ module.exports = React.createClass({
 	                console.error(xhr, API_URL, status, err.toString() + " @ checkDatabaseForChallenges");
 	            }.bind(this)
 	    	});
+    	} else {
+    		deleteChallenges();
     	}
     },
     componentDidMount: function() {
@@ -87,6 +88,8 @@ module.exports = React.createClass({
                 console.error(xhr, API_URL, status, err.toString() + " @ logout");
             }.bind(this)
         });
+        deleteChallenges();
+        
     },
     challenge: function(opponentName) {
         if(opponentName == this.props.location.state.username.username) {
@@ -108,12 +111,28 @@ module.exports = React.createClass({
             })
         }
     },
+    deleteChallenges : function() {
+    	$.ajax({
+        	url: API_CHALLENGES,
+            type: 'DELETE',
+            dataType: "json",
+            data: {"username": `${this.props.location.state.username.username}`},
+            success: function(users) {
+                console.log("Delete Success")
+                this.setState({});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(xhr, API_CHALLENGES, status, err.toString() + " @ logout");
+            }.bind(this)
+        })
+    },
     render: function() {
         console.log(this.state.opponent);
         var isVisible = this.state.opponent != undefined;
-        var onlineUsers = this.state.users.map(user => {
+        var onlineUsers = this.state.users.map((user, index) => {
+        	var aStyle = { color: '#800000', cursor: 'pointer' };
             return(<div>
-                    <a onClick={() => this.challenge(user.username)}>{user.username}</a>
+                    <a style={aStyle} onClick={() => this.challenge(user.username)}>{user.username}</a>
                     <br/>
                    </div>);
         });
@@ -122,12 +141,11 @@ module.exports = React.createClass({
             <div>
                 <div className="left">
                     <h1 id="title"> Tic Tac Toe Lobby</h1>
-                    <h3 id="usersHeading">Online Users</h3>
+                    <h3 id="usersHeading">Online Users - Click a name to challenge them</h3>
 
                     <div>
                         {onlineUsers}
                     </div>
-                    <input type="button" onClick={this.logout} value="Logout"/>
                 </div>
                 <div className="right">
                     <Match username={this.props.location.state.username.username} opponent={this.state.opponent} show={isVisible}/>
