@@ -100,7 +100,7 @@ app.delete('/api/challenges', function(req, res) {
     } catch(e) {
         console.log(e);
     }
-})
+});
 
 app.post('/api/challenges', function(req, res) {
     console.log("POST" + req.body.username)

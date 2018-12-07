@@ -65,8 +65,6 @@ module.exports = React.createClass({
 	                console.error(xhr, API_URL, status, err.toString() + " @ checkDatabaseForChallenges");
 	            }.bind(this)
 	    	});
-    	} else {
-    		this.deleteChallenges(this.props.location.state.username.username);
     	}
     },
     componentDidMount: function() {
