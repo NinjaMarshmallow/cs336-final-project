@@ -8,7 +8,7 @@ var API_CHALLENGES = "/api/challenges"
 
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isPlaying: false, _isMounted: false};
+        return {users: [], _isPlaying: false, _isMounted: false, _wins: false};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -49,7 +49,10 @@ module.exports = React.createClass({
 		            	if (accept) {
 		            		console.log("You accepted the challenge");
 		            		this.state._isPlaying = true;
-		            		this.setState({opponent: res.result});	
+		            		this.setState({opponent: res.result});
+		            		this.challenge(res.result, this.props.location.state.username.username);
+		            	} else {
+		            		this.deleteChallenges(res.result);
 		            	}
 		                
 	            	}
@@ -59,7 +62,7 @@ module.exports = React.createClass({
 	            }.bind(this)
 	    	});
     	} else {
-    		deleteChallenges();
+    		this.deleteChallenges(this.props.location.state.username.username);
     	}
     },
     componentDidMount: function() {
@@ -88,10 +91,15 @@ module.exports = React.createClass({
                 console.error(xhr, API_URL, status, err.toString() + " @ logout");
             }.bind(this)
         });
-        deleteChallenges();
+        this.deleteChallenges(this.props.location.state.username.username);
         
     },
-    challenge: function(opponentName) {
+    winner: function(username) {
+    	alert(`${username} is the winner!`);
+    	this.deleteChallenges(this.props.location.state.username.username);
+    	this._isPlaying = false;
+    },
+    challenge: function(opponentName, first) {
         if(opponentName == this.props.location.state.username.username) {
             console.log("That's you...");
         } else {
@@ -101,7 +109,7 @@ module.exports = React.createClass({
 	            dataType: "json",
 	            data: {"username": `${this.props.location.state.username.username}`,
         				"opponent": `${opponentName}`,
-        				"first": `${this.props.location.state.username.username}`},
+        				"first": first},
 	            success: function(users) {
 	                console.log("Issuing challenge to: " + opponentName);
 	            }.bind(this),
@@ -111,12 +119,12 @@ module.exports = React.createClass({
             })
         }
     },
-    deleteChallenges : function() {
+    deleteChallenges : function(username) {
     	$.ajax({
         	url: API_CHALLENGES,
             type: 'DELETE',
             dataType: "json",
-            data: {"username": `${this.props.location.state.username.username}`},
+            data: {"username": username},
             success: function(users) {
                 console.log("Delete Success")
                 this.setState({});
@@ -132,7 +140,7 @@ module.exports = React.createClass({
         var onlineUsers = this.state.users.map((user, index) => {
         	var aStyle = { color: '#800000', cursor: 'pointer' };
             return(<div>
-                    <a style={aStyle} onClick={() => this.challenge(user.username)}>{user.username}</a>
+                    <a style={aStyle} onClick={() => this.challenge(user.username, user.username)}>{user.username}</a>
                     <br/>
                    </div>);
         });
