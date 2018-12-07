@@ -92,11 +92,11 @@ app.delete('/api/usernames', function(req, res) {
 })
 
 app.delete('/api/challenges', function(req, res) {
-    console.log("Delete Request");
+    console.log("Delete Request /api/challenges");
     console.log(req.body);
     try {
-        usernamesDB.collection('challenges').remove({username: username});
-        usernamesDB.collection('challenges').remove({opponent: username});
+        usernamesDB.collection('challenges').remove({username: req.body.username});
+        usernamesDB.collection('challenges').remove({opponent: req.body.username});
     } catch(e) {
         console.log(e);
     }

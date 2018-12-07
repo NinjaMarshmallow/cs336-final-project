@@ -8,7 +8,7 @@ var API_CHALLENGES = "/api/challenges"
 
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isPlaying: false, _isMounted: false, _wins: false};
+        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -45,7 +45,11 @@ module.exports = React.createClass({
 	            	console.log(res);
 	            	if(res.result != "No Challenges") {
 		            	console.log("Challenge Received: ");
-		            	var accept = confirm(`${res.result} has challenged you. Accept?`);
+		            	var popuptext = `${res.result} has challenged you. Accept?`;
+		            	if(this.state._isChallenging) {
+	            			popuptext = `${res.result} has accepted. Start Game?`;
+		            	}
+		            	var accept = confirm(popuptext);
 		            	if (accept) {
 		            		console.log("You accepted the challenge");
 		            		this.state._isPlaying = true;
@@ -98,8 +102,10 @@ module.exports = React.createClass({
     	alert(`${username} is the winner!`);
     	this.deleteChallenges(this.props.location.state.username.username);
     	this._isPlaying = false;
+    	this._isChallenging = false;
     },
     challenge: function(opponentName, first) {
+    	this.state._isChallenging = true;
         if(opponentName == this.props.location.state.username.username) {
             console.log("That's you...");
         } else {
@@ -148,7 +154,7 @@ module.exports = React.createClass({
         return (
             <div>
                 <div className="left">
-                    <h1 id="title"> Tic Tac Toe Lobby</h1>
+                    <h1 id="title"> Welcome to Tic Tac Toe, {this.props.location.state.username.username}!</h1>
                     <h3 id="usersHeading">Online Users - Click a name to challenge them</h3>
 
                     <div>
