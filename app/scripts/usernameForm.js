@@ -1,4 +1,9 @@
 import React from 'react'
+/** UsernameForm Component
+* This React Class handles the user logging in to the system
+* The input is saved and passed to the parent class, Welcome
+* Usage <UsernameForm onUserNameSubmit={ () => someFunction() }
+*/
 module.exports = React.createClass({
     getInitialState: function() {
         return {username: ''};

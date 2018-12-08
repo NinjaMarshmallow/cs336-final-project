@@ -1,4 +1,5 @@
 const API_URL = "/api/usernames";
+var API_CHALLENGES = "/api/challenges"
 const POLL_INTERVAL = 2000;
-
-module.exports = {API_URL, POLL_INTERVAL};
+// External File for holding global variables
+module.exports = {API_URL, POLL_INTERVAL, API_CHALLENGES};

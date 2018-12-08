@@ -1,11 +1,21 @@
 import React from 'react';
 import $ from 'jquery';
 import '../css/base.css';
-import {API_URL, POLL_INTERVAL } from './global'
+import {API_URL, POLL_INTERVAL, API_CHALLENGES } from './global'
 import { browserHistory } from 'react-router'
 import Match from "./match"
-var API_CHALLENGES = "/api/challenges"
 
+/**
+* The Lobby Class handles most of the core functionality of the application
+* There exists a child class called Match, which handles the game logic after
+* two players have already argeed to play a game. Once the user logs in, they can
+* see all of the other users that are currently online. By clicking on another
+* name, the application sends a challenge request to the user with that name. If
+* the user accepts, the Match component is set to visible and given the usernames of
+* both the user and the opponent. Upon the user either closing the window, or
+* pressing the back button, the user is considered offline and deleted from the 
+* list of online users.
+*/
 module.exports = React.createClass({
     getInitialState: function() {
         return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false};

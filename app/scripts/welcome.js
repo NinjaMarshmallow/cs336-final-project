@@ -4,7 +4,15 @@ import '../css/base.css';
 import UserNameForm from './usernameForm'
 import { API_URL, POLL_INTERVAL } from './global';
 import {browserHistory} from 'react-router'
-
+/** Welcome Component
+* This React Class is the component attached to the home route.
+* This is the first screen the user will see upon reaching the URL of the game
+* There is a child component UsernameForm, which allows the user to sign in
+* Once the user enters their username, the application checks if there already
+* exists a user online with that username. If the username is not being used,
+* then the user is directed by the React Router to the Lobby route, else 
+* the user is prompted to use a different name.
+*/
 module.exports = React.createClass({
     getInitialState: function() {
         return {username: "", errorMessage: ""};

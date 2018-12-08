@@ -2,6 +2,15 @@ import React from 'react';
 import $ from 'jquery';
 import '../css/base.css';
 
+/** Match Component
+* This React Class is a mediator between the Lobby Class,
+* the main parent component of the application, and the Game Component
+* The parameters of the component are username (a String), opponent (a String), and onWinner (a function)
+* username is the client's entered username
+* opponent is the username of the other player that the client is currently playing against
+* onWinner is a function that should be called when one of the players wins the game
+* Usage: <Match username="Player1" opponent="Player2" onWinner={ () => someFunction() }
+*/
 module.exports = React.createClass({
     getInitialState: function() {
         return {username: "", opponent: "", _isMounted: false};
