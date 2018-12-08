@@ -31,8 +31,7 @@ module.exports = React.createClass({
                     onChange={this.handleUserNameChange}
                 />
                 <input type="submit" value="Submit" />
-            </form>
-                
+                </form>
             </div>
         );
     }

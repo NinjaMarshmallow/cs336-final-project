@@ -18,7 +18,7 @@ import Match from "./match"
 */
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false};
+        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: ""};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -118,7 +118,8 @@ module.exports = React.createClass({
     challenge: function(opponentName, first) {
     	this.state._isChallenging = true;
         if(opponentName == this.props.location.state.username.username) {
-            console.log("That's you...");
+            this.state.errorMessage = "That's you, ya stupid...";
+            setTimeout(() => this.state.errorMessage = "", 2000);
         } else {
             $.ajax({
             	url: API_CHALLENGES,
@@ -154,6 +155,7 @@ module.exports = React.createClass({
     render: function() {
         console.log(this.state.opponent);
         var isVisible = this.state.opponent != undefined;
+        var messageStyle = { color: '#333333' };
         var onlineUsers = this.state.users.map((user, index) => {
         	var aStyle = { color: '#800000', cursor: 'pointer' };
             return(<div>
@@ -161,13 +163,12 @@ module.exports = React.createClass({
                     <br/>
                    </div>);
         });
-        //<input id="search" type="text"/>
         return (
             <div>
                 <div className="left">
                     <h1 id="title"> Welcome to Tic Tac Toe, {this.props.location.state.username.username}!</h1>
                     <h3 id="usersHeading">Online Users - Click a name to challenge them</h3>
-
+                    <i id="message" style={ messageStyle }>{ this.state.errorMessage }</i>
                     <div>
                         {onlineUsers}
                     </div>
