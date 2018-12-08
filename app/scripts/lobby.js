@@ -34,6 +34,7 @@ module.exports = React.createClass({
     	console.log("Data: ");
     	console.log(data);
     	if(!this.state._isPlaying) {
+
 	    	$.ajax({
 	    		url: API_CHALLENGES,
 	    		type: "GET",
@@ -42,6 +43,7 @@ module.exports = React.createClass({
 	            data: data,
 	            cache: false,
 	            success: function(res) {
+	            	console.log("Response from /api/challenges GET")
 	            	console.log(res);
 	            	if(res.result != "No Challenges") {
 		            	console.log("Challenge Received: ");
@@ -99,8 +101,9 @@ module.exports = React.createClass({
     winner: function(username) {
     	alert(`${username} is the winner!`);
     	this.deleteChallenges(this.props.location.state.username.username);
-    	this._isPlaying = false;
-    	this._isChallenging = false;
+    	this.state._isPlaying = false;
+    	this.state._isChallenging = false;
+    	this.state.opponent = undefined;
     },
     challenge: function(opponentName, first) {
     	this.state._isChallenging = true;
@@ -160,7 +163,7 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <div className="right">
-                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} show={isVisible}/>
+                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} onWinner={this.winner} show={isVisible}/>
                 </div>
             </div>
         );
