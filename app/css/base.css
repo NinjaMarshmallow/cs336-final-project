@@ -67,3 +67,19 @@ ul {
   float: right;
   width: 70%;
 }
+
+.GameGrid {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-gap: 10pm;
+  background-color: #fff;
+  color: #444;
+}
+
+.Tile {
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
+}

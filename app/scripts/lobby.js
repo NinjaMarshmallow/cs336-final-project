@@ -13,7 +13,7 @@ import Match from "./match"
 * name, the application sends a challenge request to the user with that name. If
 * the user accepts, the Match component is set to visible and given the usernames of
 * both the user and the opponent. Upon the user either closing the window, or
-* pressing the back button, the user is considered offline and deleted from the 
+* pressing the back button, the user is considered offline and deleted from the
 * list of online users.
 */
 module.exports = React.createClass({
@@ -70,7 +70,7 @@ module.exports = React.createClass({
 		            	} else {
 		            		this.deleteChallenges(res.result);
 		            	}
-		                
+
 	            	}
 	            }.bind(this),
 	            error: function(xhr, status, err) {
@@ -106,7 +106,7 @@ module.exports = React.createClass({
             }.bind(this)
         });
         this.deleteChallenges(this.props.location.state.username.username);
-        
+
     },
     winner: function(username) {
     	alert(`${username} is the winner!`);

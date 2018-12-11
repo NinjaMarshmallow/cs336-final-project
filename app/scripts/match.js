@@ -1,4 +1,5 @@
 import React from 'react';
+import GameGrid from "./gameGrid.js"
 import $ from 'jquery';
 import '../css/base.css';
 
@@ -22,7 +23,7 @@ module.exports = React.createClass({
                     <h1 id="title">{this.props.username} VS. {this.props.opponent}</h1>
                     <br></br>
                     <button onClick={() => this.props.onWinner(this.props.username)}>Click this button to Win!! </button>
-
+                    <GameGrid tiles={[]} username={this.props.username} onWinner={this.props.onWinner}/>
                 </div>
             );
         } else {
