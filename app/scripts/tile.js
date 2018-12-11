@@ -1,6 +1,5 @@
 import React from 'react';
 import $ from 'jquery';
-import '../css/base.css';
 
 module.exports = React.createClass({
   getInitialState: function() {

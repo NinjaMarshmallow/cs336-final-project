@@ -1,7 +1,7 @@
 import React from 'react';
 import GameGrid from "./gameGrid.js"
 import $ from 'jquery';
-import '../css/base.css';
+//import '../css/base.css';
 
 /** Match Component
 * This React Class is a mediator between the Lobby Class,

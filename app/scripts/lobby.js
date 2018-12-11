@@ -1,6 +1,5 @@
 import React from 'react';
 import $ from 'jquery';
-import '../css/base.css';
 import {API_URL, POLL_INTERVAL, API_CHALLENGES } from './global'
 import { browserHistory } from 'react-router'
 import Match from "./match"

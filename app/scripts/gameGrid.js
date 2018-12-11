@@ -1,13 +1,12 @@
 import React from 'react';
 import Tile from './tile.js';
 import $ from 'jquery';
-import '../css/base.css';
 
 module.exports = React.createClass ({
   handleTileClick: function(index) {
     let tiles = this.state.tiles;
     tiles[index]=this.props.username;
-    //console.log("TILE CLICKED: " + index + "  " + tiles[index]);
+    console.log("TILE CLICKED: " + index + "  " + tiles[index]);
 
     //if it's my turn:
       //if the tile is empty
@@ -26,7 +25,7 @@ module.exports = React.createClass ({
   render: function() {
     //FIXME: get GameGrid to apply CSS
     return (
-      <div className="GameGrid">
+      <div id="gameGrid" className="GameGrid">
         <Tile id="tile0" index={0} user={this.props.username} tileClicked={this.handleTileClick}/>
         <Tile id="tile1" index={1} user={this.props.username} tileClicked={this.handleTileClick}/>
         <Tile id="tile2" index={2} user={this.props.username} tileClicked={this.handleTileClick}/>
