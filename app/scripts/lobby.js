@@ -1,9 +1,10 @@
 import React from 'react';
 import $ from 'jquery';
 import '../css/base.css';
-import {API_URL, POLL_INTERVAL, API_CHALLENGES } from './global'
+import {API_URL, POLL_INTERVAL, API_CHALLENGES, API_TOP_USERS } from './global'
 import { browserHistory } from 'react-router'
 import Match from "./match"
+import Leaderboard from "./leaderboard"
 
 /**
 * The Lobby Class handles most of the core functionality of the application
@@ -18,7 +19,7 @@ import Match from "./match"
 */
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: ""};
+        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: "", topPlayers: []};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -27,7 +28,6 @@ module.exports = React.createClass({
                 dataType: 'json',
                 cache: false,
                 success: function(users) {
-                    console.log("Success: " + users);
                     this.setState({users: users});
                 }.bind(this),
                 error: function(xhr, status, err) {
@@ -36,15 +36,32 @@ module.exports = React.createClass({
             });
         }
     },
+    loadTopPlayersFromServer: function() {
+    	if(this.state._isMounted){
+            $.ajax({
+                url: API_TOP_USERS,
+                dataType: 'json',
+                cache: false,
+                success: function(users) {
+                	console.log("Top Players from Server")
+                	console.log(users);
+                    var top10 = users.result;
+                    top10.sort( (user1, user2) => user2.wins - user1.wins);
+                    if(top10.length > 10) {
+                    	top10 = top10.slice(0, 10);	
+                    }
+                    this.setState({topPlayers: top10});
+                    
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(xhr, API_URL, status, err.toString() + " @ loadTopPlayersFromServer");
+                }.bind(this)
+            });
+        }
+    },
     checkDatabaseForChallenges: function() {
-    	console.log("Props: ")
-    	console.log(this.props);
-    	console.log(this.props.location.state.username.username);
     	var data = {username: this.props.location.state.username.username };
-    	console.log("Data: ");
-    	console.log(data);
     	if(!this.state._isPlaying) {
-
 	    	$.ajax({
 	    		url: API_CHALLENGES,
 	    		type: "GET",
@@ -53,10 +70,7 @@ module.exports = React.createClass({
 	            data: data,
 	            cache: false,
 	            success: function(res) {
-	            	console.log("Response from /api/challenges GET")
-	            	console.log(res);
 	            	if(res.result != "No Challenges") {
-		            	console.log("Challenge Received: ");
 		            	var popuptext = `${res.result} has challenged you. Accept?`;
 		            	if(this.state._isChallenging) {
 	            			popuptext = `${res.result} has accepted. Start Game?`;
@@ -80,14 +94,17 @@ module.exports = React.createClass({
     	}
     },
     componentDidMount: function() {
+    	// Listeners for if the user exits the page
         window.addEventListener("beforeunload", event => { this.logout() });
         window.onpopstate = event => { this.logout() };
         console.log("Mounted");
         this.state._isMounted = true;
         this.loadOnlineUsersFromServer();
         this.checkDatabaseForChallenges();
+        this.loadTopPlayersFromServer();
         setInterval(this.loadOnlineUsersFromServer, POLL_INTERVAL);
         setInterval(this.checkDatabaseForChallenges, POLL_INTERVAL);
+        setInterval(this.loadTopPlayersFromServer, POLL_INTERVAL);
     },
     logout: function() {
         console.log("Logout!");
@@ -109,11 +126,38 @@ module.exports = React.createClass({
         
     },
     winner: function(username) {
-    	alert(`${username} is the winner!`);
+    	if(username != null) {
+    		alert(`${username} is the winner!`);
+    		if(username == this.props.location.state.username.username) {
+				var user = this.state.topPlayers.find(user => user.username == username);
+				if(user == undefined) {
+					user = { username: username, wins: 0};
+				}
+				console.log("User has won a game");
+				console.log(user);
+				this.updateLeaderboard(user.username, Number(user.wins) + 1);
+    		}
+    	} else {
+    		alert("The game was a tie :/");
+    	}
     	this.deleteChallenges(this.props.location.state.username.username);
     	this.state._isPlaying = false;
     	this.state._isChallenging = false;
-    	this.state.opponent = undefined;
+    	this.state.opponent = undefined;	
+    },
+    updateLeaderboard: function(username, wins) {
+    	$.ajax({
+    		url: API_TOP_USERS,
+            type: 'PUT',
+            dataType: "json",
+            data: {"username": username, "wins": wins},
+            success: function(users) {
+                console.log("Leaderboard Updated")
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(xhr, API_URL, status, err.toString() + " @ updateLeaderboard");
+            }.bind(this)
+    	})
     },
     challenge: function(opponentName, first) {
     	this.state._isChallenging = true;
@@ -167,6 +211,7 @@ module.exports = React.createClass({
             <div>
                 <div className="left">
                     <h1 id="title"> Welcome to Tic Tac Toe, {this.props.location.state.username.username}!</h1>
+                    <Leaderboard topPlayers={ this.state.topPlayers }/>
                     <h3 id="usersHeading">Online Users - Click a name to challenge them</h3>
                     <i id="message" style={ messageStyle }>{ this.state.errorMessage }</i>
                     <div>

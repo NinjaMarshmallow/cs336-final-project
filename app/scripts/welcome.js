@@ -41,6 +41,7 @@ module.exports = React.createClass({
             pathname:"/lobby", 
             state: {username: this.state.username}
         });
+        this.setState({username: ""})
     },
     render: function() {
         return (

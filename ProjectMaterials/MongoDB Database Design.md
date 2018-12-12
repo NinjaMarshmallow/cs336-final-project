@@ -64,3 +64,14 @@
 	
 	Once a client declares victory, or one of the clients is not on the online users list 
 		(closed the window) all moves associated with both usersnames are deleted
+
+#### archivedUsers Collection
+
+	Document Structure:
+		{
+			"username" : "Moose",
+			"wins" : "5"
+		}
+	Record how many wins each player has and add it to the running leaderboard
+	
+	Leaderboard will be displayed in the lobby
