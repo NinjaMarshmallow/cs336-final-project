@@ -1,6 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import '../css/table.css'
+import '../css/base.css'
 
 /** Leaderboard Component
 * 
