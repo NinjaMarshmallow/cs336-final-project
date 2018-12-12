@@ -1,7 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import '../css/base.css';
-import tableCSS from '../css/table.css'
+import '../css/table.css'
 
 /** Leaderboard Component
 * 
@@ -22,7 +21,7 @@ module.exports = React.createClass({
             return (
             <div style = { float } >
                 <h3>Leaderboard</h3>
-                <table className={tableCSS.blueTable}>
+                <table className="blueTable">
                 <tbody>
                 <tr>
                 <td> Username</td><td> # of Wins</td></tr>

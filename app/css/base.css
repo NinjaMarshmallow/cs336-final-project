@@ -58,16 +58,6 @@ ul {
   padding-left: 30px;
 }
 
-.left {
-  float: left;
-  width: 30%;
-}
-
-.right {
-  float: right;
-  width: 70%;
-}
-
 .GameGrid {
   display: grid;
   grid-template-columns: 100px 100px 100px;
