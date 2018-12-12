@@ -1,6 +1,5 @@
 import React from 'react';
 import $ from 'jquery';
-import '../css/base.css';
 import UserNameForm from './usernameForm'
 import { API_URL, POLL_INTERVAL } from './global';
 import {browserHistory} from 'react-router'
@@ -10,7 +9,7 @@ import {browserHistory} from 'react-router'
 * There is a child component UsernameForm, which allows the user to sign in
 * Once the user enters their username, the application checks if there already
 * exists a user online with that username. If the username is not being used,
-* then the user is directed by the React Router to the Lobby route, else 
+* then the user is directed by the React Router to the Lobby route, else
 * the user is prompted to use a different name.
 */
 module.exports = React.createClass({
@@ -38,7 +37,7 @@ module.exports = React.createClass({
     },
     enterLobby: function() {
         browserHistory.push({
-            pathname:"/lobby", 
+            pathname:"/lobby",
             state: {username: this.state.username}
         });
         this.setState({username: ""})

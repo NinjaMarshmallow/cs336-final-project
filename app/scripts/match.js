@@ -1,6 +1,7 @@
 import React from 'react';
+import GameGrid from "./gameGrid.js"
 import $ from 'jquery';
-import '../css/base.css';
+//import '../css/base.css';
 
 /** Match Component
 * This React Class is a mediator between the Lobby Class,
@@ -21,8 +22,8 @@ module.exports = React.createClass({
                 <div>
                     <h1 id="title">{this.props.username} VS. {this.props.opponent}</h1>
                     <br></br>
-                    <button onClick={ () => this.props.onWinner(this.props.username) }>Click this button to Win!! </button>
-
+                    <button onClick={() => this.props.onWinner(this.props.username)}>Click this button to Win!! </button>
+                    <GameGrid tiles={[]} username={this.props.username} onWinner={this.props.onWinner}/>
                 </div>
             );
         } else {
