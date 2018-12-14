@@ -94,10 +94,11 @@ module.exports = React.createClass ({
       else this.props.onLoser(this.props.username);
     }
     //if a tie game, declare a tie. I'm calling onLoser for slight optimization purposes.
-    else if (tiles.length == 9 && tiles.length > 0) {
+    else if (tiles.length > 0) {
       let tieGame = true;
       tiles.forEach(tile => {
-        if (tile == null) tieGame=false;
+        console.log("TILE IS: \""+tile+"\"");
+        if (tile == null || tile == "") tieGame=false;
       });
       if (tieGame) this.props.onLoser(null);
       //else, tile 8 was clicked but not all the tiles are full.
