@@ -25,7 +25,6 @@ module.exports = React.createClass ({
                     let index = move["square"];
                     let moveOwner = move["username"];
                     dbTiles[index] = moveOwner;
-
                   })
 
                   //if a change has been made, that means the opponent made a move. (FIXME: does it?? only if you update local state before pushing)
@@ -95,11 +94,17 @@ module.exports = React.createClass ({
       else this.props.onLoser(this.props.username);
     }
     //if a tie game, declare a tie. I'm calling onLoser for slight optimization purposes.
-    else if (this.state.tiles.length == 9) {
-      this.props.onLoser(null)
+    else if (tiles.length == 9 && tiles.length > 0) {
+      let tieGame = true;
+      tiles.forEach(tile => {
+        if (tile == null) tieGame=false;
+      });
+      if (tieGame) this.props.onLoser(null);
+      //else, tile 8 was clicked but not all the tiles are full.
+      //no winner, loser, or tie, as the game is still in progress.
     }
     else {
-      //no winner, loser, or tie, as the game is still in progress.
+      //some tiles remain to be clicked.
     }
   },
   handleTileClick: function(index, user) {
@@ -136,7 +141,7 @@ module.exports = React.createClass ({
     if (this.state.whoseTurn == "") this.state.whoseTurn = this.props.first;
     return (
       <div>
-        <h3>It&rsquo;s {this.state.whoseTurn} turn.</h3>
+        <h3>It&rsquo;s {this.state.whoseTurn}&rsquo;s turn.</h3>
         <div id="gameGrid" className="GameGrid">
           <Tile id="tile0" index={0} user={this.props.username} text={this.state.tiles[0]} tileClicked={this.handleTileClick}/>
           <Tile id="tile1" index={1} user={this.props.username} text={this.state.tiles[1]}  tileClicked={this.handleTileClick}/>

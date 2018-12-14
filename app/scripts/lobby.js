@@ -151,10 +151,13 @@ module.exports = React.createClass({
       }
     },
     clearGame: function() {
+      console.log("End Game");
       this.deleteChallenges(this.props.location.state.username.username);
-    	this.state._isPlaying = false;
+      this.deleteMoves(this.props.location.state.username.username)
+      this.state._isPlaying = false;
     	this.state._isChallenging = false;
     	this.state.opponent = undefined;
+
     },
     updateLeaderboard: function(username, wins) {
     	$.ajax({
@@ -211,7 +214,22 @@ module.exports = React.createClass({
                 this.setState({});
             }.bind(this),
             error: function(xhr, status, err) {
-                console.error(xhr, API_CHALLENGES, status, err.toString() + " @ logout");
+                console.error(xhr, API_CHALLENGES, status, err.toString() + " @ deleteChallenges");
+            }.bind(this)
+        })
+    },
+    deleteMoves : function(username) {
+    	$.ajax({
+        	url: API_MOVES,
+            type: 'DELETE',
+            dataType: "json",
+            data: {"username": username},
+            success: function(users) {
+                console.log("Delete Success")
+                this.setState({});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(xhr, API_MOVES, status, err.toString() + " @ deleteMoves");
             }.bind(this)
         })
     },
