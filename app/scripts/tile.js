@@ -3,22 +3,27 @@ import $ from 'jquery';
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {};
+    return {value: ""};
+ },
+ setButtonText: function() {
+   this.setState((state) => {
+     return {value: state.value};
+   });
  },
   handleClick: function() {
-    //FIXME: set button value
-    //FIXME: get button to change with CSS
-    $( "#tileButton" ).innerHTML = this.props.user
-    this.props.tileClicked(this.props.index);
+    let tileId = "#tileButton" + this.props.index
+    this.setButtonText();
+    this.props.tileClicked(this.props.index, this.props.user);
   },
   render: function() {
+    let identifier = "tileButton" + this.props.index;
     return (
       <button
-      id="tileButton"
+      id={identifier}
       type="button"
       className="Tile"
       onClick={this.handleClick}
-      ></button>
+      >{this.state.value}</button>
     );
   }
 

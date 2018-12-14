@@ -16,6 +16,10 @@ module.exports = React.createClass({
     getInitialState: function() {
         return {username: "", opponent: "", _isMounted: false};
     },
+    componentDidMount: function() {
+      //TODO: once a loader is built, call loader and set interval.
+      //this loader checks for winner and updates GameGrid state (tiles and turn);
+    },
     render: function() {
         if(this.props.show) {
             return (
@@ -23,7 +27,7 @@ module.exports = React.createClass({
                     <h1 id="title">{this.props.username} VS. {this.props.opponent}</h1>
                     <br></br>
                     <button onClick={() => this.props.onWinner(this.props.username)}>Click this button to Win!! </button>
-                    <GameGrid tiles={[]} username={this.props.username} onWinner={this.props.onWinner}/>
+                    <GameGrid tiles={[]} username={this.props.username} opponent={this.props.opponent} first={this.props.first} onWinner={this.props.onWinner}/>
                 </div>
             );
         } else {

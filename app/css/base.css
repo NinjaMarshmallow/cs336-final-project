@@ -92,7 +92,7 @@ table.blueTable tfoot .links a{
 .GameGrid {
   display: grid;
   grid-template-columns: 100px 100px 100px;
-  grid-gap: 10pm;
+  grid-gap: 20pm;
   background-color: #fff;
   color: #444;
 }
@@ -102,5 +102,5 @@ table.blueTable tfoot .links a{
   color: #fff;
   border-radius: 5px;
   padding: 20px;
-  font-size: 150%;
+  font-size: 100%;
 }

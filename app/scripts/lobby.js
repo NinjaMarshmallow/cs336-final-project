@@ -43,15 +43,13 @@ module.exports = React.createClass({
                 dataType: 'json',
                 cache: false,
                 success: function(users) {
-                	console.log("Top Players from Server")
-                	console.log(users);
                     var top10 = users.result;
                     top10.sort( (user1, user2) => user2.wins - user1.wins);
                     if(top10.length > 10) {
-                    	top10 = top10.slice(0, 10);	
+                    	top10 = top10.slice(0, 10);
                     }
                     this.setState({topPlayers: top10});
-                    
+
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(xhr, API_URL, status, err.toString() + " @ loadTopPlayersFromServer");
@@ -128,22 +126,36 @@ module.exports = React.createClass({
     winner: function(username) {
     	if(username != null) {
     		alert(`${username} is the winner!`);
-    		if(username == this.props.location.state.username.username) {
-				var user = this.state.topPlayers.find(user => user.username == username);
-				if(user == undefined) {
-					user = { username: username, wins: 0};
-				}
-				console.log("User has won a game");
-				console.log(user);
-				this.updateLeaderboard(user.username, Number(user.wins) + 1);
-    		}
+    		this.winGame(username);
     	} else {
     		alert("The game was a tie :/");
     	}
-    	this.deleteChallenges(this.props.location.state.username.username);
+    	this.clearGame();
+    },
+    loser: function(username) {
+    	if(username != null) {
+    		alert(`${username} lost :<`);
+    	} else {
+    		alert("The game was a tie :/");
+    	}
+    	this.clearGame();
+    },
+    winGame: function(username) {
+      if(username == this.props.location.state.username.username) {
+      var user = this.state.topPlayers.find(user => user.username == username);
+      if(user == undefined) {
+        user = { username: username, wins: 0};
+      }
+      console.log("User has won a game");
+      console.log(user);
+      this.updateLeaderboard(user.username, Number(user.wins) + 1);
+      }
+    },
+    clearGame: function() {
+      this.deleteChallenges(this.props.location.state.username.username);
     	this.state._isPlaying = false;
     	this.state._isChallenging = false;
-    	this.state.opponent = undefined;	
+    	this.state.opponent = undefined;
     },
     updateLeaderboard: function(username, wins) {
     	$.ajax({
@@ -197,7 +209,6 @@ module.exports = React.createClass({
         })
     },
     render: function() {
-        console.log(this.state.opponent);
         var isVisible = this.state.opponent != undefined;
         var messageStyle = { color: '#333333' };
         var onlineUsers = this.state.users.map((user, index) => {
@@ -207,6 +218,11 @@ module.exports = React.createClass({
                     <br/>
                    </div>);
         });
+        //randomly determine who gets to make the first move.
+        let firstPlayer = Math.floor(Math.random() * Math.floor(2)); //expected output: 0 or 1
+        let whoPlaysFirst;
+        if (firstPlayer == 0) whoPlaysFirst = this.props.location.state.username.username;
+        else whoPlaysFirst = this.state.opponent;
         return (
             <div>
                 <div className="left">
@@ -219,7 +235,7 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <div className="right">
-                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} onWinner={this.winner} show={isVisible}/>
+                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} first={whoPlaysFirst} onWinner={this.winner} show={isVisible}/>
                 </div>
             </div>
         );
