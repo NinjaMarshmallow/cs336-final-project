@@ -9,11 +9,10 @@ module.exports = React.createClass ({
   },
   componentDidMount: function() {
     this.setState({whoseTurn: this.props.first, _isMounted: true})
-    this.loadTilesFromServer();
     setInterval(this.loadTilesFromServer, POLL_INTERVAL);
   },
   loadTilesFromServer: function() {
-      if(this.state._isMounted){
+      if(this.state._isMounted && this.state.whoseTurn==this.props.opponent){
           $.ajax({
               url: API_MOVES,
               dataType: 'json',
@@ -43,8 +42,6 @@ module.exports = React.createClass ({
                   //if a change has been made, that means the opponent made a move. (FIXME: does it?? only if you update local state before pushing)
                   //turn will become "mine" if a change has been made.
                   if (changed) {
-                    console.log("old: " + tiles);
-                    console.log("DB: " + dbTiles);
                     this.setState({whoseTurn: this.props.username, tiles: dbTiles});
                     this.checkWinner();
                   }
@@ -59,6 +56,7 @@ module.exports = React.createClass ({
   checkWinner: function() {
     //middle row, middle column, "  \  ", "  /  "
     let tiles = this.state.tiles;
+    // console.log(this.props.username + " is checking winner.");
     if (
       (tiles[3] == tiles[4] && tiles[4] == tiles[5] && tiles[4] != null) ||
       (tiles[1] == tiles[4] && tiles[4] == tiles[7] && tiles[4] != null) ||

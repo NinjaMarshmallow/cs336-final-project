@@ -22,7 +22,7 @@ module.exports = React.createClass({
         return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: "", topPlayers: [], first: ""};
     },
     loadOnlineUsersFromServer: function() {
-        if(this.state._isMounted){
+        if(this.state._isMounted && !this.state._isPlaying){
             $.ajax({
                 url: API_URL,
                 dataType: 'json',
@@ -37,7 +37,7 @@ module.exports = React.createClass({
         }
     },
     loadTopPlayersFromServer: function() {
-    	if(this.state._isMounted){
+    	if(this.state._isMounted && !this.state._isPlaying){
             $.ajax({
                 url: API_TOP_USERS,
                 dataType: 'json',
@@ -49,7 +49,8 @@ module.exports = React.createClass({
                     	top10 = top10.slice(0, 10);
                     }
                     this.setState({topPlayers: top10});
-
+                    console.log("LEADERS SHOULD BE SET.");
+                    console.log(users);
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(xhr, API_URL, status, err.toString() + " @ loadTopPlayersFromServer");
@@ -154,10 +155,8 @@ module.exports = React.createClass({
       console.log("End Game");
       this.deleteChallenges(this.props.location.state.username.username);
       this.deleteMoves(this.props.location.state.username.username)
-      this.state._isPlaying = false;
-    	this.state._isChallenging = false;
-    	this.state.opponent = undefined;
-
+      this.setState({_isPlaying: false, _isChallenging: false, opponent: undefined})
+      this.loadTopPlayersFromServer();
     },
     updateLeaderboard: function(username, wins) {
     	$.ajax({
