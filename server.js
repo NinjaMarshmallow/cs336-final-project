@@ -43,8 +43,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 // GET - /api/usernames/
 app.get('/api/usernames', function(req, res) {
     var usernamesList = tictactoeDB.collection('usernames').find({}).toArray((err, result) => {
-        console.log("Result: ");
-        console.log(result);
         if(err) throw err;
         res.json(result);
     });
@@ -56,8 +54,6 @@ app.get('/api/challenges', function(req, res) {
     console.log(req.query)
     tictactoeDB.collection('challenges').find({opponent: req.query.username}).toArray((err, result) => {
         if (err) throw err
-        console.log("Result GET /api/challenges/");
-        console.log(result);
         if(result === undefined || result.length == 0) {
             res.statusCode = 201;
             res.send({result: "No Challenges"});
@@ -69,12 +65,8 @@ app.get('/api/challenges', function(req, res) {
 
 // GET - /api/archivedUsers/
 app.get('/api/archivedUsers', function(req, res) {
-    console.log("GET");
-    console.log("archivedUsers");
     tictactoeDB.collection('archivedUsers').find().toArray((err, result) => {
         if (err) throw err
-        console.log("Result GET /api/archivedUsers/");
-        console.log(result);
         if(result === undefined || result.length == 0) {
             res.statusCode = 201;
             res.send({result: "No Users"});
@@ -84,9 +76,16 @@ app.get('/api/archivedUsers', function(req, res) {
     });
 });
 
+//GET - /api/moves
+app.get('/api/moves', function(req, res) {
+    tictactoeDB.collection('moves').find().toArray((err, result) => {
+        if(err) throw err
+        res.json(result);
+    });
+});
+
 // POST - /api/usernames/
 app.post('/api/usernames', function(req, res, next) {
-    console.log("POST /usernames" + req.body);
     tictactoeDB.collection('usernames').find({username: req.body.username}).toArray((err, result) => {
         if (err) throw err
         if(result === undefined || result.length == 0) {
@@ -104,7 +103,6 @@ app.post('/api/usernames', function(req, res, next) {
 
 // POST - /api/challenges/
 app.post('/api/challenges', function(req, res) {
-    console.log("POST" + req.body.username)
     tictactoeDB.collection('challenges').find({username: req.body.username}).toArray((err, result) => {
         if (err) throw err
         if(result === undefined || result.length == 0) {
@@ -120,14 +118,18 @@ app.post('/api/challenges', function(req, res) {
 
 // PUT - /api/archivedUsers/
 app.put('/api/archivedUsers', function(req, res) {
-    console.log("PUT " + req.body.username  + " " + req.body.wins);
     tictactoeDB.collection('archivedUsers').update({username: req.body.username}, req.body, {upsert: true});
 });
 
+// POST - /api/moves/
+app.post('/api/moves', function(req, res) {
+    console.log("POST Moves");
+    console.log(req.body);
+    tictactoeDB.collection('moves').insert(req.body);
+})
+
 // DELETE - /api/usernames/
 app.delete('/api/usernames', function(req, res) {
-    console.log("Delete Request");
-    console.log(req.body);
     var username = (req.body.username);
     try {
         tictactoeDB.collection('usernames').remove(req.body);
@@ -138,8 +140,6 @@ app.delete('/api/usernames', function(req, res) {
 
 // DELETE - /api/challenges/
 app.delete('/api/challenges', function(req, res) {
-    console.log("Delete Request /api/challenges");
-    console.log(req.body);
     try {
         tictactoeDB.collection('challenges').remove({username: req.body.username});
         tictactoeDB.collection('challenges').remove({opponent: req.body.username});
