@@ -5,14 +5,10 @@ module.exports = React.createClass({
   getInitialState: function() {
     return {value: ""};
  },
- setButtonText: function() {
-   this.setState((state) => {
-     return {value: state.value};
-   });
+ setButtonText: function(json) {
+   this.setState(json);
  },
   handleClick: function() {
-    let tileId = "#tileButton" + this.props.index
-    this.setButtonText();
     this.props.tileClicked(this.props.index, this.props.user);
   },
   render: function() {

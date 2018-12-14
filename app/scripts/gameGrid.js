@@ -92,21 +92,41 @@ module.exports = React.createClass ({
     setInterval(this.loadTilesFromServer, POLL_INTERVAL);
   },
   handleTileClick: function(index, user) {
-    let tiles = this.state.tiles;
-    //FIXME: why isn't user updating the tile?
-    console.log("whoseTurn: " + this.state.whoseTurn);
-    console.log("user: " + user);
-    if (this.state.whoseTurn == user) {
-      let clickedTile = "#tileButton" + index;
-      $(clickedTile).setState({value: user});
-      tiles[index]=user;
-    }
+    // console.log("whoseTurn: " + this.state.whoseTurn);
+    // console.log("user: " + user);
     //if it's my turn:
+    if (this.state.whoseTurn == user) {
       //if the tile is empty
-        //make ajax PUT call to server
-        //mark not my turn
-      //else don't do anything
-    //else, tell the user to wait trn.
+      if (tiles[index] == null) {
+        /* update local state */
+
+        //update tile text state
+        let clickedTile = "#tileButton" + index;
+        $(clickedTile).setButtonText({value: user});
+
+        //update local Game state. includes tiles and turn.
+        this.state.tiles[index]=user;
+        this.setState({whoseTurn: this.props.opponent, tiles: this.state.tiles}) //switch turn and leave updated state alone
+
+        //then post the tile to the database.
+        this.postMoveToServer(this.props.username, this.props.opponent, 0, index);
+      }
+    }
+  },
+  postMoveToServer: function(user, opp, board, tile) {
+    let move = {username: user, opponent: opp, board: board, square: tile};
+    $.ajax({
+      url: API_MOVES,
+      type: 'POST',
+      dataType: "json",
+      data: move,
+      success: function(moves) {
+        console.log("Tile " + tile + "updated with user " + user + ".");
+      }.bind(this),
+      error: function(xhr, status, err) {
+          console.error(xhr, API_MOVES, status, err.toString() + " @ move");
+      }.bind(this)
+    });
   },
   render: function() {
     return (
