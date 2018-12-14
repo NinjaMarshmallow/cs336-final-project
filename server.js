@@ -78,7 +78,8 @@ app.get('/api/archivedUsers', function(req, res) {
 
 //GET - /api/moves
 app.get('/api/moves', function(req, res) {
-    tictactoeDB.collection('moves').find($or: [{username: req.body.username}, {opponent: req.body.username}]).toArray((err, result) => {
+  //find contents: {$or: [{username: req.body.username}, {opponent: req.body.username}]}
+    tictactoeDB.collection('moves').find().toArray((err, result) => {
         if(err) throw err
         res.json(result);
     });

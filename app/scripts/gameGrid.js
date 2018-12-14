@@ -94,12 +94,12 @@ module.exports = React.createClass ({
       else this.props.onLoser(this.props.username);
     }
     //if a tie game, declare a tie. I'm calling onLoser for slight optimization purposes.
-    else if (tiles.length > 0) {
+    else if (tiles.length == 9) {
       let tieGame = true;
-      tiles.forEach(tile => {
-        console.log("TILE IS: \""+tile+"\"");
+      for (var i = tiles.length; i--;) {
+        let tile = tiles[i];
         if (tile == null || tile == "") tieGame=false;
-      });
+      }
       if (tieGame) this.props.onLoser(null);
       //else, tile 8 was clicked but not all the tiles are full.
       //no winner, loser, or tie, as the game is still in progress.
@@ -120,6 +120,7 @@ module.exports = React.createClass ({
 
         //then post the tile to the database.
         this.postMoveToServer(this.props.username, this.props.opponent, 0, index);
+        this.checkWinner();
       }
     }
   },
@@ -131,7 +132,6 @@ module.exports = React.createClass ({
       dataType: "json",
       data: move,
       success: function(moves) {
-        this.checkWinner();
       }.bind(this),
       error: function(xhr, status, err) {
           console.error(xhr, API_MOVES, status, err.toString() + " @ move");

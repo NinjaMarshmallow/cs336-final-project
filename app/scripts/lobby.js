@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import '../css/base.css';
-import {API_URL, POLL_INTERVAL, API_CHALLENGES, API_TOP_USERS } from './global'
+import {API_URL, POLL_INTERVAL, API_CHALLENGES, API_TOP_USERS, API_MOVES } from './global'
 import { browserHistory } from 'react-router'
 import Match from "./match"
 import Leaderboard from "./leaderboard"

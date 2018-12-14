@@ -21,7 +21,6 @@ module.exports = React.createClass({
                 <div>
                     <h1 id="title">{this.props.username} VS. {this.props.opponent}</h1>
                     <br></br>
-                    <button onClick={() => this.props.onWinner(this.props.username)}>Click this button to Win!! </button>
                     <GameGrid tiles={[]} username={this.props.username} opponent={this.props.opponent} first={this.props.first} onWinner={this.props.onWinner} onLoser={this.props.onLoser}/>
                 </div>
             );
