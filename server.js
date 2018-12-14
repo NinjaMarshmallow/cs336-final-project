@@ -58,7 +58,7 @@ app.get('/api/challenges', function(req, res) {
             res.statusCode = 201;
             res.send({result: "No Challenges"});
         } else {
-            res.send({result: result[0].username});
+            res.send({result: result[0]});
         }
     });
 });
@@ -113,7 +113,7 @@ app.post('/api/challenges', function(req, res) {
             res.send({result: "Challenge Already Sent..."});
         }
     });
-    
+
 });
 
 // PUT - /api/archivedUsers/

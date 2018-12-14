@@ -19,7 +19,7 @@ import Leaderboard from "./leaderboard"
 */
 module.exports = React.createClass({
     getInitialState: function() {
-        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: "", topPlayers: []};
+        return {users: [], _isPlaying: false, _isMounted: false, _isChallenging: false, errorMessage: "", topPlayers: [], first: ""};
     },
     loadOnlineUsersFromServer: function() {
         if(this.state._isMounted){
@@ -69,20 +69,19 @@ module.exports = React.createClass({
 	            cache: false,
 	            success: function(res) {
 	            	if(res.result != "No Challenges") {
-		            	var popuptext = `${res.result} has challenged you. Accept?`;
+		            	var popuptext = `${res.result.username} has challenged you. Accept?`;
 		            	if(this.state._isChallenging) {
-	            			popuptext = `${res.result} has accepted. Start Game?`;
+	            			popuptext = `${res.result.username} has accepted. Start Game?`;
 		            	}
 		            	var accept = confirm(popuptext);
 		            	if (accept) {
 		            		console.log("You accepted the challenge");
 		            		this.state._isPlaying = true;
-		            		this.setState({opponent: res.result});
-		            		this.challenge(res.result, this.props.location.state.username.username);
+		            		this.setState({opponent: res.result.username});
+		            		this.challenge(res.result.username, res.result.first);
 		            	} else {
-		            		this.deleteChallenges(res.result);
+		            		this.deleteChallenges(res.result.username);
 		            	}
-
 	            	}
 	            }.bind(this),
 	            error: function(xhr, status, err) {
@@ -171,7 +170,15 @@ module.exports = React.createClass({
             }.bind(this)
     	})
     },
-    challenge: function(opponentName, first) {
+    challenge: function(opponentName, whoPlaysFirst) {
+      //randomly determine who gets to make the first move.
+      let first=whoPlaysFirst;
+      if (first == null) {
+        let firstPlayer = Math.floor(Math.random() * Math.floor(2)); //expected output: 0 or 1
+        if (firstPlayer == 0) first = this.props.location.state.username.username;
+        else first = opponentName;
+      }
+      this.setState({first: first});
     	this.state._isChallenging = true;
         if(opponentName == this.props.location.state.username.username) {
             this.state.errorMessage = "That's you, ya stupid...";
@@ -214,15 +221,10 @@ module.exports = React.createClass({
         var onlineUsers = this.state.users.map((user, index) => {
         	var aStyle = { color: '#800000', cursor: 'pointer' };
             return(<div>
-                    <a style={aStyle} onClick={() => this.challenge(user.username, user.username)}>{user.username}</a>
+                    <a style={aStyle} onClick={() => this.challenge(user.username, null)}>{user.username}</a>
                     <br/>
                    </div>);
         });
-        //randomly determine who gets to make the first move.
-        let firstPlayer = Math.floor(Math.random() * Math.floor(2)); //expected output: 0 or 1
-        let whoPlaysFirst;
-        if (firstPlayer == 0) whoPlaysFirst = this.props.location.state.username.username;
-        else whoPlaysFirst = this.state.opponent;
         return (
             <div>
                 <div className="left">
@@ -235,7 +237,7 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <div className="right">
-                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} first={whoPlaysFirst} onWinner={this.winner} onLoser={this.loser} show={isVisible}/>
+                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} first={this.state.first} onWinner={this.winner} onLoser={this.loser} show={isVisible}/>
                 </div>
             </div>
         );

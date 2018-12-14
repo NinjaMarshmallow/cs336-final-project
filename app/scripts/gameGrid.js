@@ -5,7 +5,12 @@ import {API_MOVES, POLL_INTERVAL} from './global'
 
 module.exports = React.createClass ({
   getInitialState: function() {
-    return {whoseTurn: this.props.first, tiles: []};
+    return {whoseTurn: "", tiles: [], _isMounted: false};
+  },
+  componentDidMount: function() {
+    this.setState({whoseTurn: this.props.first, _isMounted: true})
+    this.loadTilesFromServer();
+    setInterval(this.loadTilesFromServer, POLL_INTERVAL);
   },
   loadTilesFromServer: function() {
       if(this.state._isMounted){
@@ -14,28 +19,37 @@ module.exports = React.createClass ({
               dataType: 'json',
               cache: false,
               success: function(moves) {
-                  //todo: determine if change in tiles, then set whose turn.
                   //build a local copy of the server's move state.
                   let dbTiles = [];
-                  for (move in moves) {
+                  moves.forEach(move => {
                     let index = move["square"];
                     let moveOwner = move["username"];
-                    dbTiles[idex] = moveOwner;
-                  }
+                    dbTiles[index] = moveOwner;
+
+                  })
+
+                  //if a change has been made, that means the opponent made a move. (FIXME: does it?? only if you update local state before pushing)
+                  //turn will become "mine" if a change has been made.
+
                   //check the local server copy against the current state for a change.
-                  let changed = false;;
-                  for (tile in dbTiles) {
-                    if (! this.state.tiles.includes(tile)) {
-                      changed = true;
+                  let changed = false;
+                  let tiles = this.state.tiles;
+                  if (dbTiles.length != tiles.length) changed = true;
+                  else {
+                    for (var i = dbTiles.length; i--;) {
+                      if (dbTiles[i]!=tiles[i]) changed=true;
                     }
                   }
+
                   //if a change has been made, that means the opponent made a move. (FIXME: does it?? only if you update local state before pushing)
                   //turn will become "mine" if a change has been made.
                   if (changed) {
+                    console.log("old: " + tiles);
+                    console.log("DB: " + dbTiles);
                     this.setState({whoseTurn: this.props.username, tiles: dbTiles});
                     this.checkWinner();
                   }
-                  //else, no change was made. It's still opponent's turn. Keep waiting.
+                  //else, no change was made. Keep waiting
               }.bind(this),
               error: function(xhr, status, err) {
                   console.error(xhr, API_URL, status, err.toString() + " @ loadOnlineUsersFromServer");
@@ -45,6 +59,7 @@ module.exports = React.createClass ({
   },
   checkWinner: function() {
     //middle row, middle column, "  \  ", "  /  "
+    let tiles = this.state.tiles;
     if (
       (tiles[3] == tiles[4] && tiles[4] == tiles[5] && tiles[4] != null) ||
       (tiles[1] == tiles[4] && tiles[4] == tiles[7] && tiles[4] != null) ||
@@ -87,22 +102,11 @@ module.exports = React.createClass ({
       //no winner, loser, or tie, as the game is still in progress.
     }
   },
-  componentDidMount: function() {
-    this.loadTilesFromServer();
-    setInterval(this.loadTilesFromServer, POLL_INTERVAL);
-  },
   handleTileClick: function(index, user) {
-    // console.log("whoseTurn: " + this.state.whoseTurn);
-    // console.log("user: " + user);
     //if it's my turn:
     if (this.state.whoseTurn == user) {
       //if the tile is empty
-      if (tiles[index] == null) {
-        /* update local state */
-
-        //update tile text state
-        let clickedTile = "#tileButton" + index;
-        $(clickedTile).setButtonText({value: user});
+      if (this.state.tiles[index] == null) {
 
         //update local Game state. includes tiles and turn.
         this.state.tiles[index]=user;
@@ -121,7 +125,7 @@ module.exports = React.createClass ({
       dataType: "json",
       data: move,
       success: function(moves) {
-        console.log("Tile " + tile + "updated with user " + user + ".");
+        this.checkWinner();
       }.bind(this),
       error: function(xhr, status, err) {
           console.error(xhr, API_MOVES, status, err.toString() + " @ move");
@@ -129,19 +133,20 @@ module.exports = React.createClass ({
     });
   },
   render: function() {
+    if (this.state.whoseTurn == "") this.state.whoseTurn = this.props.first;
     return (
       <div>
         <h3>It&rsquo;s {this.state.whoseTurn} turn.</h3>
         <div id="gameGrid" className="GameGrid">
-          <Tile id="tile0" index={0} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile1" index={1} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile2" index={2} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile3" index={3} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile4" index={4} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile5" index={5} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile6" index={6} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile7" index={7} user={this.props.username} tileClicked={this.handleTileClick}/>
-          <Tile id="tile8" index={8} user={this.props.username} tileClicked={this.handleTileClick}/>
+          <Tile id="tile0" index={0} user={this.props.username} text={this.state.tiles[0]} tileClicked={this.handleTileClick}/>
+          <Tile id="tile1" index={1} user={this.props.username} text={this.state.tiles[1]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile2" index={2} user={this.props.username} text={this.state.tiles[2]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile3" index={3} user={this.props.username} text={this.state.tiles[3]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile4" index={4} user={this.props.username} text={this.state.tiles[4]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile5" index={5} user={this.props.username} text={this.state.tiles[5]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile6" index={6} user={this.props.username} text={this.state.tiles[6]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile7" index={7} user={this.props.username} text={this.state.tiles[7]}  tileClicked={this.handleTileClick}/>
+          <Tile id="tile8" index={8} user={this.props.username} text={this.state.tiles[8]}  tileClicked={this.handleTileClick}/>
         </div>
       </div>
     );

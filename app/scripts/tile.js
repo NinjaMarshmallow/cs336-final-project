@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 module.exports = React.createClass({
   getInitialState: function() {
-    return {value: ""};
+    return {};
  },
  setButtonText: function(json) {
    this.setState(json);
@@ -19,7 +19,7 @@ module.exports = React.createClass({
       type="button"
       className="Tile"
       onClick={this.handleClick}
-      >{this.state.value}</button>
+      >{this.props.text}</button>
     );
   }
 
