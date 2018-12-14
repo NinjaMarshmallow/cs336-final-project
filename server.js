@@ -78,7 +78,7 @@ app.get('/api/archivedUsers', function(req, res) {
 
 //GET - /api/moves
 app.get('/api/moves', function(req, res) {
-    tictactoeDB.collection('moves').find().toArray((err, result) => {
+    tictactoeDB.collection('moves').find({username: req.body.username}, {opponent: req.body.username}).toArray((err, result) => {
         if(err) throw err
         res.json(result);
     });
@@ -147,6 +147,15 @@ app.delete('/api/challenges', function(req, res) {
         console.log(e);
     }
 });
+
+app.delete('/api/moves', function(req,res) {
+    try {
+        tictactoeDB.collection('moves').remove({username: req.body.username});
+        tictactoeDB.collection('moves').remove({opponent: req.body.username});
+    } catch(e) {
+        console.log(e);
+    }
+})
 
 
 // Add Headers to responses
