@@ -16,6 +16,7 @@ module.exports = React.createClass ({
           $.ajax({
               url: API_MOVES,
               dataType: 'json',
+              data: {"username": this.props.username},
               cache: false,
               success: function(moves) {
                   //build a local copy of the server's move state.
