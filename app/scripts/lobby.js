@@ -235,7 +235,7 @@ module.exports = React.createClass({
                     </div>
                 </div>
                 <div className="right">
-                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} first={whoPlaysFirst} onWinner={this.winner} show={isVisible}/>
+                    <Match username={this.props.location.state.username.username} opponent={this.state.opponent} first={whoPlaysFirst} onWinner={this.winner} onLoser={this.loser} show={isVisible}/>
                 </div>
             </div>
         );
